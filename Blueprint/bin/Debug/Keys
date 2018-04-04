@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SubC>
+  <Keys>
+    <t>command:StartRecordingHotkeyCmd</t>
+    <w>command:StopRecordingCmd</w>
+  </Keys>
+  <f>StartRecordingHotkeyCmd</f>
+  <g>StopRecordingCmd</g>
+</SubC>
