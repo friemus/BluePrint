@@ -69,8 +69,6 @@ namespace Blueprint.ViewModels
 
         public SavableObject Owner { get; set; }
 
-        //public static string Keys { get; internal set; } 
-
         public PropertyInfo Command
         {
             get => command;
@@ -108,11 +106,10 @@ namespace Blueprint.ViewModels
                 if (OldKey != value)
                 {
                     oldKey = value;
-                    RaisePropertyChanged(nameof(OldKey));
+                    //RaisePropertyChanged(nameof(OldKey));
                 }
             }
         }
-
     }
 
 
@@ -152,29 +149,36 @@ namespace Blueprint.ViewModels
 
                     log.Pressed += KeyPress;
 
-                    //foreach (var key in KeysCollection)
-                    //{
-                    //    settings.Update($@"Keys:/{log.Key}",  $"{property.Name}");
-                    //}
-                    
+                    foreach (var key in KeysCollection)
+                    {
+                        settings.Update($@"Keys/{log.Key},{property.Name},{item.ID}");
+                    }
+
                 }
-              
+
             }
              
             LoadSettingsAsync();
         }
 
-        public void SaveKey(HotKey HotKey)
+        public void SaveKey(HotKey HotKey, string ID)
         {
-            settings.Remove($@"Keys:/{HotKey.OldKey}");
-            settings.Update($@"Keys:/{HotKey.Key}", $"{HotKey.Command.Name},{HotKey.Owner.ID}");
+
+            var old = ($@"{HotKey.OldKey}");
+
+            if (old == HotKey.Command.Name || old == HotKey.Owner.ID)
+            {
+                settings.Remove($@"Keys/{HotKey.OldKey}");
+            }
+
+            settings.Update($@"Keys/{HotKey.Key}", $"{HotKey.Command.Name},{HotKey.Owner.ID},{ID}");
         }
 
         public void KeyPress(object sender, string s)
         {
             var itm = KeysCollection.FirstOrDefault(c => (((HotKey)sender).Command) == c.Command );
-
-            SaveKey(itm);
+            var ids =  (((HotKey)sender).Owner.ID);
+            SaveKey(itm, ids);
         }
 
         public void ExecuteKey(string key)
@@ -202,7 +206,6 @@ namespace Blueprint.ViewModels
                 {
                     itm.Key = load.Name;
 
-
                     var split = load.Value.Split(",".ToCharArray());
                     var ID = split[1];
 
@@ -210,7 +213,7 @@ namespace Blueprint.ViewModels
 
                 }
 
-                // create am owner for each command.
+                // create an owner for each command.
 
                 else
                 {
