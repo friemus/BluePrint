@@ -18,12 +18,12 @@ namespace Blueprint.Views
             InitializeComponent();
 
             Loaded += MainWindow_Loaded;
+            var settings = new SubCXDoc("Settings.xml");
+            var tabVM1 = new RecordingVM(1, settings);
 
-            var tabVM1 = new RecordingVM(1);
+            var tabVM2 = new RecordingVM(2, settings);
 
-            var tabVM2 = new RecordingVM(2);
-
-            keysVM = new KeysVM(new SubCXDoc("Settings.xml"), tabVM1, tabVM2);
+            keysVM = new KeysVM(settings, tabVM1, tabVM2);
 
             tab1.DataContext = tabVM1;
             tab2.DataContext = tabVM2;

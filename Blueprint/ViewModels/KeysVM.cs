@@ -23,11 +23,11 @@ namespace Blueprint.ViewModels
 
     }
 
-    public class RecordingVM
+    public class RecordingVM : SavableObject
     {
         private int IDs;
         public int ID { get; private set; }
-        public RecordingVM(int ID)
+        public RecordingVM(int ID, ISettingsService settings) : base(settings, id:ID.ToString())
         {
             IDs  = ID;
 
@@ -67,7 +67,7 @@ namespace Blueprint.ViewModels
         private string key;
         public event EventHandler<string> Pressed;
 
-        public object Owner { get; set; }
+        public SavableObject Owner { get; set; }
 
         //public static string Keys { get; internal set; } 
 
@@ -89,12 +89,27 @@ namespace Blueprint.ViewModels
             {
                 if (key == value) return;
 
+                OldKey = key;
                 key = value;
 
                 RaisePropertyChanged(nameof(Key));
 
                 Pressed?.Invoke(this, Key);
 
+            }
+        }
+
+        private string oldKey = string.Empty;
+        public string OldKey
+        {
+            get => oldKey;
+            set
+            {
+                if (OldKey != value)
+                {
+                    oldKey = value;
+                    RaisePropertyChanged(nameof(OldKey));
+                }
             }
         }
 
@@ -110,7 +125,7 @@ namespace Blueprint.ViewModels
 
         public ObservableCollection<HotKey> KeysCollection { get; } = new ObservableCollection<HotKey>() { };
 
-        public object Owner { get; private set; }
+        public ObservableObject Owner { get; private set; }
 
         private int test;
 
@@ -121,20 +136,17 @@ namespace Blueprint.ViewModels
             set => Set(nameof(Test), ref test, value);
         }
 
-        public KeysVM(ISettingsService settings, params object[] classes) : base(settings,"KeysVM")
+        public KeysVM(ISettingsService settings, params SavableObject[] classes) : base(settings,"KeysVM")
         {
  
             foreach (var item in classes)
             {
-                //char c = 'j';
                 var Properties= item.GetType().GetProperties().Where(m => m.GetCustomAttributes(true).OfType<KeysAttribute>().Count() > 0);
 
                 foreach (var property in Properties)
                 {
                     
                     var log = new HotKey() { Owner = item, Command = property, Key = string.Empty};
-
-                    //item.Key += (e) => Key?.Invoke(e);
 
                     KeysCollection.Add(log);
 
@@ -152,16 +164,17 @@ namespace Blueprint.ViewModels
             LoadSettingsAsync();
         }
 
-        public void SaveKey(string Command, string Key)
+        public void SaveKey(HotKey HotKey)
         {
-            settings.Update($@"Keys:/{Key}", $"{Command}");
+            settings.Remove($@"Keys:/{HotKey.OldKey}");
+            settings.Update($@"Keys:/{HotKey.Key}", $"{HotKey.Command.Name},{HotKey.Owner.ID}");
         }
 
         public void KeyPress(object sender, string s)
         {
             var itm = KeysCollection.FirstOrDefault(c => (((HotKey)sender).Command) == c.Command );
 
-            SaveKey(itm.Command.Name, s);
+            SaveKey(itm);
         }
 
         public void ExecuteKey(string key)
@@ -181,26 +194,31 @@ namespace Blueprint.ViewModels
 
             foreach (var load in loaded)
             {
+
                 var itm = KeysCollection.FirstOrDefault(p => p.Command.Name == load.Value);
 
                 if (itm != null)
 
                 {
                     itm.Key = load.Name;
-                    //var commandName = load.Value.Split(":".ToCharArray()).Last();
 
-                    //Test = Int32.Parse(load.Value);
 
-                    //settings?.Open("Settings.xml");
+                    var split = load.Value.Split(",".ToCharArray());
+                    var ID = split[1];
 
-                    //settings.Update($@"{load.Name}", $"{Test}");
-
-                    Console.WriteLine("load" + " " + load.Name + " " + load.Value);
+                    Console.WriteLine("load" + " " + load.Name + " " + split[0]);
 
                 }
 
+                // create am owner for each command.
 
-                //settings.Update($@"{load.Name}", $"{Test}");
+                else
+                {
+                    Console.WriteLine("unparsed");
+                }
+
+                //    settings.Update($@"{load.Name}", $"{Test}");
+                //    itm = KeysCollection.Add(load.Name, load.Command);
 
                 //settings?.Open("Settings.xml");
 
