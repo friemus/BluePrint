@@ -30,7 +30,6 @@ namespace Blueprint.ViewModels
         public RecordingVM(int ID, ISettingsService settings) : base(settings, id:ID.ToString())
         {
             IDs  = ID;
-
         }
 
         private RelayCommand startRecordingHotkeyCmd;
@@ -151,7 +150,7 @@ namespace Blueprint.ViewModels
 
                     foreach (var key in KeysCollection)
                     {
-                        settings.Update($@"Keys/{log.Key},{property.Name},{item.ID}");
+                        settings.Update($@"Keys/{log.Key}""/{property.Name}""/{item.ID}");
                     }
 
                 }
@@ -164,14 +163,14 @@ namespace Blueprint.ViewModels
         public void SaveKey(HotKey HotKey, string ID)
         {
 
-            var old = ($@"{HotKey.OldKey}");
+            //var newKey = ($@"{HotKey.Key}");
 
-            if (old == HotKey.Command.Name || old == HotKey.Owner.ID)
-            {
-                settings.Remove($@"Keys/{HotKey.OldKey}");
-            }
+            //if (newKey != HotKey.OldKey)
+            //{
+            //    settings.Remove($@"Keys/{HotKey.OldKey}");
+            //}
 
-            settings.Update($@"Keys/{HotKey.Key}", $"{HotKey.Command.Name},{HotKey.Owner.ID},{ID}");
+            settings.Update($@"Keys/{HotKey.Key}""/{HotKey.Command.Name}""/{HotKey.Owner.ID}""/{ID}");
         }
 
         public void KeyPress(object sender, string s)
@@ -206,24 +205,25 @@ namespace Blueprint.ViewModels
                 {
                     itm.Key = load.Name;
 
-                    var split = load.Value.Split(",".ToCharArray());
-                    var ID = split[1];
+                    var splits = load.Value.Split(",".ToCharArray());
 
-                    Console.WriteLine("load" + " " + load.Name + " " + split[0]);
+                    foreach (var split in splits)
+                    {
+                        Console.WriteLine($"<{split}>");
+                    }
+
+                    //var name = splits[0];
+                    //var ID = splits[1];
+                    //var tabID = splits[2];
+                   
+                    //Console.WriteLine("load" + " " + load.Name + " " + splits[0]);
 
                 }
-
-                // create an owner for each command.
 
                 else
                 {
                     Console.WriteLine("unparsed");
                 }
-
-                //    settings.Update($@"{load.Name}", $"{Test}");
-                //    itm = KeysCollection.Add(load.Name, load.Command);
-
-                //settings?.Open("Settings.xml");
 
                 await base.LoadSettingsAsync();
             }
