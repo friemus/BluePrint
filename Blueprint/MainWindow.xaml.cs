@@ -3,6 +3,7 @@ using SubCTools.Extras;
 using SubCTools.Settings;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Blueprint
         public MainWindow()
         {
             InitializeComponent();
-      
+
         }
 
         public ObservableDictionary<string, string> D { get; } = new ObservableDictionary<string, string>() ;
@@ -36,6 +37,6 @@ namespace Blueprint
         {
             cost.KeyPressed(e.Key.ToString().ToLower());
         }
-
+        
     }
 }

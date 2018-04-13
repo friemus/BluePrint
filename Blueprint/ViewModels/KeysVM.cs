@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using SubCTools.Extras.Settings;
 using SubCTools.Helpers;
 using SubCTools.Messaging.Models;
+using System.Windows.Controls;
 
 namespace Blueprint.ViewModels
 {
@@ -23,10 +24,13 @@ namespace Blueprint.ViewModels
 
     }
 
+  
     public class RecordingVM : SavableObject
     {
         private int IDs;
-        public int ID { get; private set; }
+        public int IDss { get; private set; }
+
+        [Keys]
         public RecordingVM(int ID, ISettingsService settings) : base(settings, id:ID.ToString())
         {
             IDs  = ID;
@@ -67,6 +71,7 @@ namespace Blueprint.ViewModels
         public event EventHandler<string> Pressed;
 
         public SavableObject Owner { get; set; }
+        //public IEnumerable<string> HotKeys { get; private set; }
 
         public PropertyInfo Command
         {
@@ -109,11 +114,15 @@ namespace Blueprint.ViewModels
                 }
             }
         }
+
+        public string IDs { get; internal set; }
     }
 
 
     public class KeysVM : SubCBaseVM, INotifyPropertyChanged
     {
+
+        public SavableObject ActiveOwner { get; private set; }
 
         public string Command { get; private set; }
 
@@ -121,9 +130,10 @@ namespace Blueprint.ViewModels
 
         public ObservableCollection<HotKey> KeysCollection { get; } = new ObservableCollection<HotKey>() { };
 
-        public ObservableObject Owner { get; private set; }
+        public SavableObject Owner { get; private set; }
 
         private int test;
+        public RecordingVM IDss;
 
         [Savable]
         public int Test
@@ -142,7 +152,7 @@ namespace Blueprint.ViewModels
                 foreach (var property in Properties)
                 {
                     
-                    var log = new HotKey() { Owner = item, Command = property, Key = string.Empty};
+                    var log = new HotKey() { Owner = item, Command = property, Key = string.Empty, IDs = string.Empty };
 
                     KeysCollection.Add(log);
 
@@ -150,7 +160,7 @@ namespace Blueprint.ViewModels
 
                     foreach (var key in KeysCollection)
                     {
-                        settings.Update($@"Keys/{log.Key}""/{property.Name}""/{item.ID}");
+                        settings.Update($@"HotKeys/{log.Key}""/{property.Name}""/{item.ID}""/{IDss}");
                     }
 
                 }
@@ -160,17 +170,41 @@ namespace Blueprint.ViewModels
             LoadSettingsAsync();
         }
 
-        public void SaveKey(HotKey HotKey, string ID)
+        public void OnTabSelected(object sender, SelectionChangedEventArgs e)
+        {
+            TabItem selectedTab = e.AddedItems[0] as TabItem;
+          
+            if (selectedTab.Name == "Tab1" | selectedTab.Name == "Tab2")
+            {
+                HotKey activeOwner = new HotKey()
+                {
+                    Owner = ActiveOwner
+                };
+
+            }
+
+            else if (selectedTab.Name == null)
+            {
+                Console.WriteLine("there is no item");
+            }
+
+        }
+
+        public void SaveKey(HotKey HotKey, RecordingVM ID)
         {
 
-            //var newKey = ($@"{HotKey.Key}");
+            var newKey = ($@"{HotKey.Key}");
 
-            //if (newKey != HotKey.OldKey)
-            //{
-            //    settings.Remove($@"Keys/{HotKey.OldKey}");
-            //}
+            if (newKey != HotKey.OldKey)
+            {
+                settings.Remove($@"HotKeys/{HotKey.OldKey}");
+            }
 
-            settings.Update($@"Keys/{HotKey.Key}""/{HotKey.Command.Name}""/{HotKey.Owner.ID}""/{ID}");
+            //settings.Update($@"Keys/{HotKey.Key}""/{HotKey.Command.Name}""/{HotKey.Owner.ID}""/{ID}");
+            settings.Update($@"HotKeys/{HotKey.Key}/Command/", $"{HotKey.Command.Name}");
+            settings.Update($@"HotKeys/{HotKey.Key}/Owner/", $"{HotKey.Owner}");
+            settings.Update($@"HotKeys/{HotKey.Key}/ID/", $"{ID}");
+
         }
 
         public void KeyPress(object sender, string s)
@@ -193,30 +227,36 @@ namespace Blueprint.ViewModels
         public override async Task LoadSettingsAsync()
         {
            
-            var loaded = settings.LoadAll("Keys");
+            var loaded = settings.LoadAll("HotKeys");
 
             foreach (var load in loaded)
             {
 
-                var itm = KeysCollection.FirstOrDefault(p => p.Command.Name == load.Value);
+                var itm = KeysCollection.Where(p => p.Command.Name == load.Value);
 
                 if (itm != null)
 
                 {
-                    itm.Key = load.Name;
-
-                    var splits = load.Value.Split(",".ToCharArray());
-
-                    foreach (var split in splits)
+                    foreach (var key in itm)
                     {
-                        Console.WriteLine($"<{split}>");
-                    }
+                        if (key.Key == load.Name && key.Owner.ID == load.Value)
+                        {
+                            //open settings inside load
+                            //command
+                            //&& key.Owner.ID == subitem.value
+                            //id
 
-                    //var name = splits[0];
-                    //var ID = splits[1];
-                    //var tabID = splits[2];
-                   
-                    //Console.WriteLine("load" + " " + load.Name + " " + splits[0]);
+                            KeysCollection.GetEnumerator();
+                            //itm = KeysCollection.Data();
+                             
+                            var splits = load.Value.Split("/,".ToCharArray());
+
+                            foreach (var split in splits)
+                            {
+                                Console.WriteLine($"<{split}>");
+                            }
+                        }
+                    }
 
                 }
 

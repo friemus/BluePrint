@@ -1,37 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SubC>
-  <Keys>
-    <StartRecordingHotkeyCmd />
-    <StopRecordingCmd />
-    <a>
-      <StartRecordingHotkeyCmd />
-    </a>
-    <b>
-      <StopRecordingCmd />
-    </b>
-    <e>
-      <StartRecordingHotkeyCmd />
-    </e>
-    <f>
-      <StopRecordingCmd />
-    </f>
-    <i>
-      <StartRecordingHotkeyCmd />
-    </i>
-    <j>
-      <StopRecordingCmd />
-    </j>
-    <n>
-      <StartRecordingHotkeyCmd />
-    </n>
-    <c>
-      <StopRecordingCmd />
-    </c>
-    <t>
-      <StopRecordingCmd />
-    </t>
-    <o>
-      <StartRecordingHotkeyCmd />
-    </o>
-  </Keys>
+  <HotKeys>
+    <r>
+      <Command>StopRecordingCmd</Command>
+      <Owner>Blueprint.ViewModels.RecordingVM</Owner>
+      <ID>2</ID>
+    </r>
+  </HotKeys>
 </SubC>

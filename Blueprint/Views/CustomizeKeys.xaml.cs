@@ -19,6 +19,7 @@ namespace Blueprint.Views
 
             Loaded += MainWindow_Loaded;
             var settings = new SubCXDoc("Settings.xml");
+
             var tabVM1 = new RecordingVM(1, settings);
 
             var tabVM2 = new RecordingVM(2, settings);
@@ -37,7 +38,6 @@ namespace Blueprint.Views
         }
 
         public IEnumerable<KeyValuePair<string, string>> KeysDictionary { get; private set; }
-
 
         private KeysVM keysVM;
             

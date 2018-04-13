@@ -19,12 +19,18 @@
                 Stretch="UniformToFill" />
         </Grid.Background>
         <StackPanel Orientation="Vertical">
-            <TabControl>
+            <TabControl SelectionChanged="OnTabSelected">
                 <TabItem Name="tab1" Header=" Video1">
-                    <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!" />
+                    <Button
+                        Command="{Binding StartRecordingCmd}"
+                        Content="Start Recording!!"
+                        Selector.IsSelected="{Binding OnTabSelected}" />
                 </TabItem>
                 <TabItem Name="tab2" Header="Video2">
-                    <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!!!!!" />
+                    <Button
+                        Command="{Binding StartRecordingCmd}"
+                        Content="Start Recording!!!!!!"
+                        Selector.IsSelected="{Binding OnTabSelected}" />
                 </TabItem>
             </TabControl>
             <ListBox Name="listbx" ItemsSource="{Binding KeysCollection}">
