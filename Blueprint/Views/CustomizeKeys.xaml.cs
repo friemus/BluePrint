@@ -1,4 +1,5 @@
 ﻿using Blueprint.ViewModels;
+using SubCTools.Extras.Settings;
 using SubCTools.Settings;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Blueprint.Views
     /// </summary>
     public partial class CustomizeKeys : UserControl
     {
+        public SavableObject ActiveOwner { get; private set; }
 
         public CustomizeKeys()
         {
@@ -29,7 +31,7 @@ namespace Blueprint.Views
             tab1.DataContext = tabVM1;
             tab2.DataContext = tabVM2;
             listbx.DataContext = keysVM;
-
+            DataContext = keysVM;
             //var RecordingVM = new RecordingVM ("ID");
 
             //this.DataContext = RecordingVM;
@@ -40,7 +42,7 @@ namespace Blueprint.Views
         public IEnumerable<KeyValuePair<string, string>> KeysDictionary { get; private set; }
 
         private KeysVM keysVM;
-            
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //KeyDown += KeysVM.KeyPressed;
@@ -49,5 +51,28 @@ namespace Blueprint.Views
         {
             keysVM.ExecuteKey(key);
         }
+
+        private void OnTabSelected(object sender, SelectionChangedEventArgs e)
+        {
+            //TabItem selectedTab = e.AddedItems[0] as TabItem;
+
+            //if (selectedTab.Name == "tab1" | selectedTab.Name == "tab2")
+            //{
+            //    HotKey activeOwner = new HotKey()
+            //    {
+            //        Owner = ActiveOwner
+            //    };
+            //}
+
+            //else if (selectedTab.Name == null)
+            //{
+            //    Console.WriteLine("there is no TabItem");
+            //}
+
+
+        }
+
+
+
     }
 }

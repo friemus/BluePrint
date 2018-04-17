@@ -19,35 +19,28 @@
                 Stretch="UniformToFill" />
         </Grid.Background>
         <StackPanel Orientation="Vertical">
-            <TabControl SelectionChanged="OnTabSelected">
-                <TabItem Name="tab1" Header=" Video1">
-                    <Button
-                        Command="{Binding StartRecordingCmd}"
-                        Content="Start Recording!!"
-                        Selector.IsSelected="{Binding OnTabSelected}" />
+            <TabControl>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <cmd:EventToCommand Command="{Binding DataContext.SelectedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TabItem x:Name="tab1" Header=" Video1">
+                    <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!" />
                 </TabItem>
-                <TabItem Name="tab2" Header="Video2">
-                    <Button
-                        Command="{Binding StartRecordingCmd}"
-                        Content="Start Recording!!!!!!"
-                        Selector.IsSelected="{Binding OnTabSelected}" />
+                <TabItem x:Name="tab2" Header="Video2">
+                    <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!!!!!" />
                 </TabItem>
             </TabControl>
-            <ListBox Name="listbx" ItemsSource="{Binding KeysCollection}">
+            <ListBox x:Name="listbx" ItemsSource="{Binding KeysCollection}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel
-                            Name="focusScope"
+                            x:Name="focusScope"
                             Margin="5"
                             Orientation="Horizontal">
                             <TextBlock Text="{Binding Command.Name, Mode=OneWay}" />
-                            <TextBox MaxLength="1" Text="{Binding Key}">
-                                <!--<i:Interaction.Triggers>
-                                <i:EventTrigger EventName="KeyUp">
-                                    <cmd:EventToCommand Command="{Binding DataContext.KeyChangedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" CommandParameter="{Binding ElementName=focusScope}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>-->
-                            </TextBox>
+                            <TextBox MaxLength="1" Text="{Binding Key}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -61,9 +54,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Label>
-                    Enter your passed keys:
-                </Label>
+                <Label Content="Enter your passed keys:" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"

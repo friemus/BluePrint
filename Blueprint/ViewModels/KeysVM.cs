@@ -124,6 +124,8 @@ namespace Blueprint.ViewModels
 
         public SavableObject ActiveOwner { get; private set; }
 
+        private IEnumerable<SubCBaseVM> vms;
+
         public string Command { get; private set; }
 
         public IEnumerable<object> CustomAttributes { get; private set; }
@@ -142,6 +144,13 @@ namespace Blueprint.ViewModels
             set => Set(nameof(Test), ref test, value);
         }
 
+        private string selectedTab;
+        public string SelectedTab
+        {
+            get => selectedTab;
+            set => Set(nameof(SelectedTab), ref selectedTab, value);
+
+        }
         public KeysVM(ISettingsService settings, params SavableObject[] classes) : base(settings,"KeysVM")
         {
  
@@ -166,31 +175,27 @@ namespace Blueprint.ViewModels
                 }
 
             }
+
+            if (classes != null &&  classes.Count() > 0)
+            {
+                ActiveOwner = classes.First();
+                SelectedTab = classes.First().ID;
+            }
              
             LoadSettingsAsync();
         }
 
-        public void OnTabSelected(object sender, SelectionChangedEventArgs e)
+        private RelayCommand<SelectionChangedEventArgs> selectedCommand;
+        public RelayCommand<SelectionChangedEventArgs> SelectedCommand => selectedCommand ?? (selectedCommand = new RelayCommand<SelectionChangedEventArgs>((e) =>
         {
-            TabItem selectedTab = e.AddedItems[0] as TabItem;
-          
-            if (selectedTab.Name == "Tab1" | selectedTab.Name == "Tab2")
-            {
-                HotKey activeOwner = new HotKey()
-                {
-                    Owner = ActiveOwner
-                };
+            var tabControl = e.Source as TabControl;
 
-            }
+             ActiveOwner = ((tabControl.SelectedItem as TabItem)?.DataContext as SavableObject);
+             SelectedTab = ActiveOwner?.ID ?? string.Empty;
 
-            else if (selectedTab.Name == null)
-            {
-                Console.WriteLine("there is no item");
-            }
+        }));
 
-        }
-
-        public void SaveKey(HotKey HotKey, RecordingVM ID)
+        public void SaveKey(HotKey HotKey, RecordingVM IDss)
         {
 
             var newKey = ($@"{HotKey.Key}");
@@ -203,7 +208,7 @@ namespace Blueprint.ViewModels
             //settings.Update($@"Keys/{HotKey.Key}""/{HotKey.Command.Name}""/{HotKey.Owner.ID}""/{ID}");
             settings.Update($@"HotKeys/{HotKey.Key}/Command/", $"{HotKey.Command.Name}");
             settings.Update($@"HotKeys/{HotKey.Key}/Owner/", $"{HotKey.Owner}");
-            settings.Update($@"HotKeys/{HotKey.Key}/ID/", $"{ID}");
+            settings.Update($@"HotKeys/{HotKey.Key}/ID/", $"{IDss}");
 
         }
 
@@ -211,7 +216,16 @@ namespace Blueprint.ViewModels
         {
             var itm = KeysCollection.FirstOrDefault(c => (((HotKey)sender).Command) == c.Command );
             var ids =  (((HotKey)sender).Owner.ID);
-            SaveKey(itm, ids);
+
+            //check tab datacontext
+
+            if ((ActiveOwner?.ID ?? string.Empty) == ((sender as HotKey)?.Owner?.ID ?? string.Empty))
+            {
+                Owner = ActiveOwner;
+                
+                Console.WriteLine("working");
+            }
+            SaveKey(itm, IDss);
         }
 
         public void ExecuteKey(string key)

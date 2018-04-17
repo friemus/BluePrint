@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SubC>
   <HotKeys>
-    <r>
-      <Command>StopRecordingCmd</Command>
+    <a>
+      <Command>StartRecordingHotkeyCmd</Command>
       <Owner>Blueprint.ViewModels.RecordingVM</Owner>
-      <ID>2</ID>
-    </r>
+      <ID></ID>
+    </a>
   </HotKeys>
 </SubC>

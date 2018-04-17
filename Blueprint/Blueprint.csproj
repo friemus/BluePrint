@@ -90,7 +90,6 @@
     </ApplicationDefinition>
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\KeysVM.cs" />
-    <Compile Include="ViewModels\TestVM.cs" />
     <Compile Include="Views\CustomizeKeys.xaml.cs">
       <DependentUpon>CustomizeKeys.xaml</DependentUpon>
     </Compile>
