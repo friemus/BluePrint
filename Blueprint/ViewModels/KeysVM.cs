@@ -45,6 +45,7 @@ namespace Blueprint.ViewModels
 
         private RelayCommand startRecordingCmd;
 
+
         public RelayCommand StartRecordingCmd => startRecordingCmd ?? (startRecordingCmd = new RelayCommand(()=>
         {
             Console.WriteLine(IDs + " " + " Helloooo");
@@ -71,7 +72,7 @@ namespace Blueprint.ViewModels
         public event EventHandler<string> Pressed;
 
         public SavableObject Owner { get; set; }
-        //public IEnumerable<string> HotKeys { get; private set; }
+        //public IEnumerable<Key> HotKeys { get; private set; }
 
         public PropertyInfo Command
         {
@@ -91,8 +92,11 @@ namespace Blueprint.ViewModels
             {
                 if (key == value) return;
 
-                OldKey = key;
+               
+                
                 key = value;
+
+                if (string.IsNullOrEmpty(OldKey)) OldKey = value;
 
                 RaisePropertyChanged(nameof(Key));
 
@@ -112,10 +116,12 @@ namespace Blueprint.ViewModels
                     oldKey = value;
                     //RaisePropertyChanged(nameof(OldKey));
                 }
+
             }
         }
 
-        public string IDs { get; internal set; }
+        public object IDs { get; internal set; }
+  
     }
 
 
@@ -124,8 +130,6 @@ namespace Blueprint.ViewModels
 
         public SavableObject ActiveOwner { get; private set; }
 
-        private IEnumerable<SubCBaseVM> vms;
-
         public string Command { get; private set; }
 
         public IEnumerable<object> CustomAttributes { get; private set; }
@@ -133,6 +137,8 @@ namespace Blueprint.ViewModels
         public ObservableCollection<HotKey> KeysCollection { get; } = new ObservableCollection<HotKey>() { };
 
         public SavableObject Owner { get; private set; }
+
+        public ListBox listbx;
 
         private int test;
         public RecordingVM IDss;
@@ -151,69 +157,80 @@ namespace Blueprint.ViewModels
             set => Set(nameof(SelectedTab), ref selectedTab, value);
 
         }
-        public KeysVM(ISettingsService settings, params SavableObject[] classes) : base(settings,"KeysVM")
+        public KeysVM(ISettingsService settings, params SavableObject[] classes) : base(settings, "KeysVM")
         {
- 
+            if (classes != null && classes.Count() > 0)
+            {
+                ActiveOwner = classes.First();
+                SelectedTab = classes.First().ID;
+            }
+
             foreach (var item in classes)
             {
-                var Properties= item.GetType().GetProperties().Where(m => m.GetCustomAttributes(true).OfType<KeysAttribute>().Count() > 0);
+                var Properties = item.GetType().GetProperties().Where(m => m.GetCustomAttributes(true).OfType<KeysAttribute>().Count() > 0);
 
                 foreach (var property in Properties)
                 {
-                    
+
                     var log = new HotKey() { Owner = item, Command = property, Key = string.Empty, IDs = string.Empty };
 
                     KeysCollection.Add(log);
 
                     log.Pressed += KeyPress;
 
-                    foreach (var key in KeysCollection)
-                    {
-                        settings.Update($@"HotKeys/{log.Key}""/{property.Name}""/{item.ID}""/{IDss}");
-                    }
+                    //foreach (var key in KeysCollection)
+                    //{
+                    //    settings.Update($@"HotKeys/{log.Key}""/{property.Name}""/{item.ID}");
+                    //    settings.Remove($@"HotKeys/{log.OldKey}""/{property.Name}""/{item.ID}");
 
+                    //}
                 }
-
             }
 
-            if (classes != null &&  classes.Count() > 0)
-            {
-                ActiveOwner = classes.First();
-                SelectedTab = classes.First().ID;
-            }
-             
             LoadSettingsAsync();
         }
 
+
+
         private RelayCommand<SelectionChangedEventArgs> selectedCommand;
+
+
         public RelayCommand<SelectionChangedEventArgs> SelectedCommand => selectedCommand ?? (selectedCommand = new RelayCommand<SelectionChangedEventArgs>((e) =>
         {
-            var tabControl = e.Source as TabControl;
 
-             ActiveOwner = ((tabControl.SelectedItem as TabItem)?.DataContext as SavableObject);
-             SelectedTab = ActiveOwner?.ID ?? string.Empty;
+            TabControl tabControl = e.Source as TabControl;
 
-        }));
+            if (tabControl == null) return;
+
+            ActiveOwner = ((tabControl.SelectedItem as TabItem)?.DataContext as SavableObject);
+            SelectedTab = ActiveOwner?.ID ?? string.Empty;
+
+          }));
 
         public void SaveKey(HotKey HotKey, RecordingVM IDss)
         {
 
-            var newKey = ($@"{HotKey.Key}");
-
-            if (newKey != HotKey.OldKey)
+            foreach (var Key in KeysCollection)
             {
-                settings.Remove($@"HotKeys/{HotKey.OldKey}");
+                var entry = KeysCollection.Where(i => i.OldKey == "HotKeys");
+
+                    if (entry != null)
+                    {
+                        settings.Remove($@"HotKeys/{HotKey.OldKey}");
+                        //settings.Remove($@"HotKeys/{HotKey.Key}");
+                        Console.WriteLine("This is removed:" + " " + HotKey.OldKey + " "+ HotKey.Key);
+
+                    }
+                        settings.Update($@"HotKeys/{HotKey.Key}");
+                        settings.Update($@"HotKeys/{HotKey.Key}/Command/", $"{HotKey.Command.Name}");
+                        settings.Update($@"HotKeys/{HotKey.Key}/Owner/", $"{HotKey.Owner.ID}");
+
             }
 
-            //settings.Update($@"Keys/{HotKey.Key}""/{HotKey.Command.Name}""/{HotKey.Owner.ID}""/{ID}");
-            settings.Update($@"HotKeys/{HotKey.Key}/Command/", $"{HotKey.Command.Name}");
-            settings.Update($@"HotKeys/{HotKey.Key}/Owner/", $"{HotKey.Owner}");
-            settings.Update($@"HotKeys/{HotKey.Key}/ID/", $"{IDss}");
-
         }
-
+    
         public void KeyPress(object sender, string s)
-        {
+        { 
             var itm = KeysCollection.FirstOrDefault(c => (((HotKey)sender).Command) == c.Command );
             var ids =  (((HotKey)sender).Owner.ID);
 
@@ -241,51 +258,43 @@ namespace Blueprint.ViewModels
         public override async Task LoadSettingsAsync()
         {
            
+
             var loaded = settings.LoadAll("HotKeys");
 
             foreach (var load in loaded)
             {
 
-                var itm = KeysCollection.Where(p => p.Command.Name == load.Value);
+                //var itms = loaded.FirstOrDefault(p => p.Key == load.Name);
 
-                if (itm != null)
+                var itms = loaded.Select(p =>load.Name).ToString() ;
+                if (itms != null)
 
                 {
-                    foreach (var key in itm)
+                    //itms.Key = load.Name;
+
+                    List<HotKey> listAll = new List<HotKey>();
+
+                    listAll.Add(KeysCollection);
+
+                    KeysCollection.Clear();
+
+                    foreach (var list in listAll)
                     {
-                        if (key.Key == load.Name && key.Owner.ID == load.Value)
-                        {
-                            //open settings inside load
-                            //command
-                            //&& key.Owner.ID == subitem.value
-                            //id
-
-                            KeysCollection.GetEnumerator();
-                            //itm = KeysCollection.Data();
-                             
-                            var splits = load.Value.Split("/,".ToCharArray());
-
-                            foreach (var split in splits)
-                            {
-                                Console.WriteLine($"<{split}>");
-                            }
-                        }
+                        list.Key = load.Name;
                     }
 
-                }
+                    KeysCollection.AddRange(listAll);
+                    Console.WriteLine("load" + " " + load.Name + " " + load.Value );
 
-                else
-                {
-                    Console.WriteLine("unparsed");
                 }
-
-                await base.LoadSettingsAsync();
             }
+            await base.LoadSettingsAsync();
 
-           
         }
 
     }
 
 }
+
+
 

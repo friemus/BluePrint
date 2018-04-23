@@ -26,15 +26,14 @@ namespace Blueprint.Views
 
             var tabVM2 = new RecordingVM(2, settings);
 
+            //var listbxVM = new HotKey(tabSettings);
+
             keysVM = new KeysVM(settings, tabVM1, tabVM2);
 
             tab1.DataContext = tabVM1;
             tab2.DataContext = tabVM2;
-            listbx.DataContext = keysVM;
+            tabSettings.DataContext = keysVM;
             DataContext = keysVM;
-            //var RecordingVM = new RecordingVM ("ID");
-
-            //this.DataContext = RecordingVM;
 
 
         }
@@ -54,21 +53,6 @@ namespace Blueprint.Views
 
         private void OnTabSelected(object sender, SelectionChangedEventArgs e)
         {
-            //TabItem selectedTab = e.AddedItems[0] as TabItem;
-
-            //if (selectedTab.Name == "tab1" | selectedTab.Name == "tab2")
-            //{
-            //    HotKey activeOwner = new HotKey()
-            //    {
-            //        Owner = ActiveOwner
-            //    };
-            //}
-
-            //else if (selectedTab.Name == null)
-            //{
-            //    Console.WriteLine("there is no TabItem");
-            //}
-
 
         }
 

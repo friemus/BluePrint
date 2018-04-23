@@ -1,10 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SubC>
   <HotKeys>
-    <a>
+    <h>
       <Command>StartRecordingHotkeyCmd</Command>
-      <Owner>Blueprint.ViewModels.RecordingVM</Owner>
-      <ID></ID>
-    </a>
+      <Owner>1</Owner>
+    </h>
+    <k>
+      <Command>StopRecordingCmd</Command>
+      <Owner>1</Owner>
+    </k>
+    <r>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </r>
+    <v>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </v>
+    <l>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </l>
+    <t>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </t>
+    <u>
+      <Command>StopRecordingCmd</Command>
+      <Owner>1</Owner>
+    </u>
+    <w>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </w>
+    <i>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </i>
+    <e>
+      <Command>StopRecordingCmd</Command>
+      <Owner>1</Owner>
+    </e>
+    <p>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </p>
+    <g>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </g>
+    <s>
+      <Command>StopRecordingCmd</Command>
+      <Owner>1</Owner>
+    </s>
+    <j>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </j>
+    <q>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </q>
+    <c>
+      <Command>StartRecordingHotkeyCmd</Command>
+      <Owner>1</Owner>
+    </c>
+    <z>
+      <Command>StopRecordingCmd</Command>
+      <Owner>1</Owner>
+    </z>
   </HotKeys>
 </SubC>

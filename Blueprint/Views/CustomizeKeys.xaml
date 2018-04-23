@@ -26,25 +26,34 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <TabItem x:Name="tab1" Header=" Video1">
-                    <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!" />
+                    <StackPanel>
+                        <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!" />
+                    </StackPanel>
                 </TabItem>
                 <TabItem x:Name="tab2" Header="Video2">
                     <Button Command="{Binding StartRecordingCmd}" Content="Start Recording!!!!!!" />
                 </TabItem>
+                <TabItem x:Name="tabSettings" Header="Settings">
+                    <!--  Bind to KeysVM  -->
+                    <ListBox x:Name="listbx" ItemsSource="{Binding KeysCollection}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel
+                                    x:Name="focusScope"
+                                    Margin="5"
+                                    Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Command.Name, Mode=OneWay}" />
+                                    <TextBox
+                                        x:Name="keyTxtBox"
+                                        MaxLength="1"
+                                        Text="{Binding Key}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
             </TabControl>
-            <ListBox x:Name="listbx" ItemsSource="{Binding KeysCollection}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel
-                            x:Name="focusScope"
-                            Margin="5"
-                            Orientation="Horizontal">
-                            <TextBlock Text="{Binding Command.Name, Mode=OneWay}" />
-                            <TextBox MaxLength="1" Text="{Binding Key}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
